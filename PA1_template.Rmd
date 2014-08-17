@@ -1,20 +1,49 @@
-# Reproducible Research: Peer Assessment 1
+---
+title: "Reproducible Research Assignment 1"
+author: "Abhijit K"
+date: "Monday, August 18, 2014"
+output: html_document
+---
 
+Part 1:
 
-## Loading and preprocessing the data
+```{r,echo=TRUE}
+d<-read.csv('activity.csv')
+ad<-aggregate(d$steps, by=list(date=d$date), sum, na.rm=TRUE)
+hist(ad$x)
+mean(ad$x)
+median(ad$x)
 
+ad2<-aggregate(d$steps, by=list(interval=d$interval), mean, na.rm=TRUE)
+plot(ad2$x, type="l")
+ad2[ad2$x==max(ad2$x),]
+```
 
+Impute missing values
+```{r, echo=TRUE}
+ad3<-aggregate(d$steps, by=list(date=d$date),mean, na.rm=TRUE)
+d2<-d
+d2$steps[d2$steps=="NA"]<-mean(ad$x)
+id<-aggregate(d2$steps, by=list(date=d2$date), sum, na.rm=FALSE)
+hist(id$x)
+mean(id$x)
+median(id$x)
 
-## What is mean total number of steps taken per day?
+diffmean<-mean(id$x)-mean(ad$x)
+diffmedian<- median(id$x) - median(ad$x)
+```
+Add a weekend factor to revised dataset
 
+```{r, echo=TRUE}
+d2$wend<-as.factor(ifelse(weekdays( as.POSIXlt(d2$date)) %in% c("Saturday","Sunday"), "Weekend", "Weekday")) 
+d2week<-d2[d2$wend=="Weekday",]
+d2weekend<-d2[d2$wend=="Weekend",]
+ad4<-aggregate(d2week$steps, by=list(interval=d2week$interval), mean, na.rm=TRUE)
+ad5<-aggregate(d2weekend$steps, by=list(interval=d2weekend$interval), mean, na.rm=TRUE)
+par(mfrow=c(2,1))
+plot(ad4$x, main="Weekdays", 
+  xlab="Interval", ylab="No. of steps",type="l")
+plot(ad5$x, main="Weekends", 
+  xlab="Interval", ylab="No. of steps",type="l")
 
-
-## What is the average daily activity pattern?
-
-
-
-## Imputing missing values
-
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+```
