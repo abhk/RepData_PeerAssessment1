@@ -1,38 +1,55 @@
 ---
-title: "Reproducible Research Assignment 1"
-author: "Abhijit K"
-date: "Monday, August 18, 2014"
-output:
-  html_document:
-    keep_md: yes
+title: "Reproducible Research Peer Assessment 1"
+author: "Abhijit"
+date: "Sunday, September 14, 2014"
+output: html_document
 ---
-
 Part 1:
 
 ```{r,echo=TRUE}
 d<-read.csv('activity.csv')
-ad<-aggregate(d$steps, by=list(date=d$date), sum, na.rm=TRUE)
-hist(ad$x)
-mean(ad$x)
-median(ad$x)
 
-ad2<-aggregate(d$steps, by=list(interval=d$interval), mean, na.rm=TRUE)
-plot(ad2$x, type="l")
-ad2[ad2$x==max(ad2$x),]
+ad<-tapply(d$steps,d$date,sum, na.rm=TRUE)diffmean<-imean-meansteps
+hist(ad, main="Frequency of total steps taken each day", xlab="Total number of steps taken in a day", col = "red", ylim=c(0,30))
+
+meansteps<-mean(ad)
+print(meansteps)
+
+mediansteps<-median(ad)
+print (mediansteps)
+
+
+ad2<-aggregate(steps ~ interval, d, mean, na.rm=TRUE)
+plot(ad2, type="l", main="Average number of steps for each interval", xlab="5 minute intervals", ylab="Averaged No. of steps taken in interval", col="red")
+
+ad2[ad2$steps==max(ad2$steps),]
 ```
 
 Impute missing values
 ```{r, echo=TRUE}
-ad3<-aggregate(d$steps, by=list(date=d$date),mean, na.rm=TRUE)
-d2<-d
-d2$steps[d2$steps=="NA"]<-mean(ad$x)
-id<-aggregate(d2$steps, by=list(date=d2$date), sum, na.rm=FALSE)
-hist(id$x)
-mean(id$x)
-median(id$x)
+NArows=nrow(d[is.na(d$steps),])
+print(NArows)
 
-diffmean<-mean(id$x)-mean(ad$x)
-diffmedian<- median(id$x) - median(ad$x)
+ad3<-aggregate(steps~date,d,mean, na.rm=TRUE)
+d2<-d
+filldata<-mean(ad2$steps)
+d2$steps[d2$steps=="NA"]<-filldata
+id<-tapply(d2$steps,d2$date, sum, na.rm=TRUE)
+hist(id, main="Total no. of steps taken each day with imputed values",xlab="Total number of steps taken in a day", col = "red", ylim=c(0,30))
+
+imean<-mean(id)
+print(imean)
+
+imedian<-median(id)
+print(imedian)
+
+diffmean<-imean-meansteps
+print(diffmean)
+
+diffmedian<- imedian - mediansteps
+print(diffmedian)
+
+
 ```
 Add a weekend factor to revised dataset
 
@@ -42,10 +59,14 @@ d2week<-d2[d2$wend=="Weekday",]
 d2weekend<-d2[d2$wend=="Weekend",]
 ad4<-aggregate(d2week$steps, by=list(interval=d2week$interval), mean, na.rm=TRUE)
 ad5<-aggregate(d2weekend$steps, by=list(interval=d2weekend$interval), mean, na.rm=TRUE)
+
+ad4<-aggregate(steps~interval, d2week, mean, na.rm=TRUE)
+ad5<-aggregate(steps~ interval, d2weekend,mean, na.rm=TRUE)
+
 par(mfrow=c(2,1))
-plot(ad4$x, main="Weekdays", 
-  xlab="Interval", ylab="No. of steps",type="l")
-plot(ad5$x, main="Weekends", 
-  xlab="Interval", ylab="No. of steps",type="l")
+plot(ad4, main="Weekdays", 
+  xlab="Interval", ylab="No. of steps",type="l",ylim=c(0,250))
+plot(ad5, main="Weekends", 
+  xlab="Interval", ylab="No. of steps",type="l",ylim=c(0,250))
 
 ```
