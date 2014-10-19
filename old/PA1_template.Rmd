@@ -1,7 +1,7 @@
 ---
 title: "Reproducible Research Peer Assessment 1"
 author: "Abhijit"
-date: "Sunday, October 19, 2014"
+date: "Sunday, September 14, 2014"
 output: html_document
 ---
 Part 1:
@@ -9,8 +9,7 @@ Part 1:
 ```{r,echo=TRUE}
 d<-read.csv('activity.csv')
 
-ad<-tapply(d$steps,d$date,sum, na.rm=TRUE)
-
+ad<-tapply(d$steps,d$date,sum, na.rm=TRUE)diffmean<-imean-meansteps
 hist(ad, main="Frequency of total steps taken each day", xlab="Total number of steps taken in a day", col = "red", ylim=c(0,30))
 
 meansteps<-mean(ad)
