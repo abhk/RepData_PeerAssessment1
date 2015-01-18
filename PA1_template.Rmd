@@ -27,6 +27,8 @@ ad2[ad2$steps==max(ad2$steps),]
 ```
 
 Impute missing values
+
+Strategy: Impute with mean no. of steps in that interval wherever data is NA.
 ```{r, echo=TRUE}
 NArows=nrow(d[is.na(d$steps),])
 print(NArows)
