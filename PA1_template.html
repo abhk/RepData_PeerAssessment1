@@ -78,6 +78,7 @@ plot(ad2, type=&quot;l&quot;, main=&quot;Average number of steps for each interv
 <pre><code>##     interval steps
 ## 104      835 206.2</code></pre>
 <p>Impute missing values</p>
+<p>Strategy: Impute with mean no. of steps in that interval wherever data is NA.</p>
 <pre class="r"><code>NArows=nrow(d[is.na(d$steps),])
 print(NArows)</code></pre>
 <pre><code>## [1] 2304</code></pre>
